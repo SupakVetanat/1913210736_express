@@ -8,7 +8,7 @@ var usersRouter = require('./routes/users');
 var companyRouter = require('./routes/company');
 const staffRouter = require('./routes/staff');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://superDev:BxK0ahUdmkQ9MXAQ@1913210736-fah.jih4kuj.mongodb.net/restfullapi?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb+srv://superDev:BxK0ahUdmkQ9MXAQ@1913210736-fah.jih4kuj.mongodb.net/restfullapi?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true,useFindAndModify:false});
 
 var app = express();
 
