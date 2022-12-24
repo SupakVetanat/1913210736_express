@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const staffSchema = new Schema({
+const shopSchema = new Schema({
     name: {type:String,required:true,trim:true} , // String is shorthand for {type: String}
     photo: {type:String,default:'nopic.png'},
     location:{
@@ -12,6 +12,6 @@ const staffSchema = new Schema({
     // updatedAt: {type:Date,default:Date.now},
   },{collection:"shops",timestamps:true});
 
-const shop = mongoose.model("Shop",staffSchema);
+const shop = mongoose.model("Shop",shopSchema);
 
 module.exports = shop;
