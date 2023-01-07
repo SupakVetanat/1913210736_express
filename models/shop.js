@@ -11,7 +11,7 @@ const shopSchema = new Schema({
   // createdAt: {type:Date,default:Date.now},
   // updatedAt: {type:Date,default:Date.now},
 }, { collection: "shops", timestamps: true, toJSON: { virtuals: true } });
-shopSchema.virtual('menu', {
+shopSchema.virtual('menus', {
   ref: 'Menu', // Model
   localField: '_id', // author id
   foreignField: 'shop', // author in book

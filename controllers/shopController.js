@@ -34,7 +34,7 @@ exports.byid = async (req, res, next) => {
   const { id } = req.params
   // const menu = await Menu.find().select('+name -price')
   // const menu = await Menu.find().where('price').gt(200)
-  const menu = await Shop.findById({_id: id}).populate('menu')
+  const menu = await Shop.findById({_id: id}).populate('menus')
 
   res.status(200).json({
     data: menu
