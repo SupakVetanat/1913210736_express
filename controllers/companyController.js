@@ -30,7 +30,9 @@ exports.show = async (req, res, next) => {
     })
 
     if (!company) {
-      throw new Error('ไม่พบบริษัท')
+      const error = new Error("ไม่พบข้อมูล");
+      error.statusCode = 400;
+      throw error;
     } else {
 
       res.status(200).json({
@@ -40,11 +42,7 @@ exports.show = async (req, res, next) => {
 
 
   } catch (error) {
-    res.status(400).json({
-      erorr: {
-        message: "เกิดข้อผิดพลาด " + error.message
-      }
-    })
+    next(error);
   }
 }
 
@@ -73,7 +71,9 @@ exports.destroy = async (req, res, next) => {
     console.log(company)
 
     if (company.deletedCount === 0) {
-      throw new Error('ไม่พบข้อมูลบริษัท')
+      const error = new Error("ไม่สามารถลบข้อมูลได้ / ไม่พบข้อมูลผู้ใช้งาน");
+      error.statusCode = 400;
+      throw error;
     } else {
       res.status(200).json({
         message: "ลบข้อมูลเรียบร้อยแล้ว"
@@ -81,11 +81,7 @@ exports.destroy = async (req, res, next) => {
     }
 
   } catch (error) {
-    res.status(400).json({
-      erorr: {
-        message: "เกิดข้อผิดพลาด " + error.message
-      }
-    })
+    next(error)
   }
 }
 
@@ -96,23 +92,23 @@ exports.update = async (req, res, next) => {
     const { id } = req.params
     const { name, address: { province } } = req.body
 
-    const company = await Company.findByIdAndUpdate(id, {
+    const company = await Company.findOneAndUpdate({ _id: id }, {
       name: name,
       address: { province: province }
     })
 
-    console.log(company)
+    if (!company) {
+      const error = new Error("ไม่พบข้อมูลบริษัท");
+      error.statusCode = 400;
+      throw error;
+    }
 
     res.status(200).json({
-      message: "แก้ไขข้อมูลเรียบร้อยแล้ว"
-    })
+      message: "แก้ไขข้อมูลเรียบร้อยแล้ว",
+    });
 
   } catch (error) {
-    res.status(400).json({
-      erorr: {
-        message: "เกิดข้อผิดพลาด " + error.message
-      }
-    })
+    next(error);
   }
 }
 

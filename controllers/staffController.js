@@ -13,11 +13,11 @@ exports.staff = async (req, res, next) => {
 
     const staffWithPhotoDomain = await staff.map((staff, index) => {
         return {
-          name: staff.name,
-          photo: config.DOMAIN+"/images/" + staff.photo,
+            name: staff.name,
+            photo: config.DOMAIN + "/images/" + staff.photo,
         }
-      });
-    
+    });
+
 
     res.status(200).json({
         data: staffWithPhotoDomain
@@ -33,7 +33,9 @@ exports.show = async (req, res, next) => {
         })
 
         if (!staff) {
-            throw new Error('ไม่พบผู้ใช้งาน')
+            const error = new Error("ไม่พบผู้ใช้งาน");
+            error.statusCode = 400;
+            throw error;
         } else {
 
             res.status(200).json({
@@ -43,11 +45,7 @@ exports.show = async (req, res, next) => {
 
 
     } catch (error) {
-        res.status(400).json({
-            erorr: {
-                message: "เกิดข้อผิดพลาด " + error.message
-            }
-        })
+        next(error);
     }
 }
 
@@ -61,7 +59,9 @@ exports.destroy = async (req, res, next) => {
         console.log(staff)
 
         if (staff.deletedCount === 0) {
-            throw new Error('ไม่พบข้อมูลผู้ใช้งาน')
+            const error = new Error("ไม่สามารถลบข้อมูลได้ / ไม่พบข้อมูลผู้ใช้งาน");
+            error.statusCode = 400;
+            throw error;
         } else {
             res.status(200).json({
                 message: "ลบข้อมูลเรียบร้อยแล้ว"
@@ -69,11 +69,7 @@ exports.destroy = async (req, res, next) => {
         }
 
     } catch (error) {
-        res.status(400).json({
-            erorr: {
-                message: "เกิดข้อผิดพลาด " + error.message
-            }
-        })
+        next(error);
     }
 }
 
@@ -94,23 +90,23 @@ exports.update = async (req, res, next) => {
         //     salary : salary
         // })
 
-        const staff = await Staff.updateOne({ _id: id }, {
+        const staff = await Staff.findOneAndUpdate({_id: id}, {
             name: name,
             salary: salary
         })
 
-        console.log(staff)
+        if(!staff){
+            const error = new Error("ไม่พบพนักงาน");
+            error.statusCode = 400;
+            throw error;
+          }
 
         res.status(200).json({
             message: "แก้ไขข้อมูลเรียบร้อยแล้ว"
         })
 
     } catch (error) {
-        res.status(400).json({
-            erorr: {
-                message: "เกิดข้อผิดพลาด " + error.message
-            }
-        })
+        next(error);
     }
 }
 
