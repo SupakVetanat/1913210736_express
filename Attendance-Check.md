@@ -4,3 +4,4 @@
 >> Supak (Fah): Chapter 4 - แนะนำ MongoDB
 >> Supak (Fah): Chapter 5 - Advance Mongoose
 >> Supak (Fah): Chapter 6 - Upload File
+>> Supak (Fah): Chapter 8 - การทำระบบล็อกอินตามมาตรฐําน JSON Web
