@@ -125,7 +125,7 @@ exports.insert = async (req, res, next) => {
     }
 
     var photoData
-    if (photo == null) {
+    if (photo == null||photo == "") {
         photoData = "nopic.png"
     } else {
         photoData = await saveImageToDisk(photo)

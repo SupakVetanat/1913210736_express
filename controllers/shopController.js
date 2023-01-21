@@ -18,7 +18,7 @@ exports.index = async (req, res, next) => {
     return {
       id: shop.id,
       name: shop.name,
-      photo: config.DOMAIN+"/images/" + shop.photo,
+      photo: config.DOMAIN + "/images/" + shop.photo,
       location: shop.location,
     }
   });
@@ -42,7 +42,7 @@ exports.byid = async (req, res, next) => {
   const { id } = req.params
   // const menu = await Menu.find().select('+name -price')
   // const menu = await Menu.find().where('price').gt(200)
-  const menu = await Shop.findById({_id: id}).populate('menus')
+  const menu = await Shop.findById({ _id: id }).populate('menus')
 
   res.status(200).json({
     data: menu
@@ -50,56 +50,63 @@ exports.byid = async (req, res, next) => {
 }
 
 exports.insert = async (req, res, next) => {
-  try{
-  const { name, location ,photo} = req.body
+  try {
+    const { name, location, photo } = req.body
 
-      //validaion
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const error = new Error("ข้อมูลที่ได้รับมาไม่ถูกต้อง");
-        error.statusCode = 422;
-        error.validation = errors.array()
-        throw error;
-      }
+    //validaion
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error("ข้อมูลที่ได้รับมาไม่ถูกต้อง");
+      error.statusCode = 422;
+      error.validation = errors.array()
+      throw error;
+    }
 
-  let shop = new Shop({
+    var photoData
+    if (photo == null||photo == "") {
+      photoData = "nopic.png"
+    } else {
+      photoData = await saveImageToDisk(photo)
+    }
+
+    let shop = new Shop({
       name: name,
       location: location,
-      photo: await saveImageToDisk(photo)
-  })
-  await shop.save()
+      photo: photoData
+    })
+    await shop.save()
 
-  res.status(200).json({
+    res.status(200).json({
       message: "เพิ่มข้อมูลร้านอาหารเรียบร้อยแล้ว"
-  })
-} catch(error){
-  next(error)
-}
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 
 async function saveImageToDisk(baseImage) {
   //หา path จริงของโปรเจค
-  const projectPath = path.resolve('./') ;
+  const projectPath = path.resolve('./');
   //โฟลเดอร์และ path ของการอัปโหลด
   const uploadPath = `${projectPath}/public/images/`;
 
   //หานามสกุลไฟล์
-  const ext = baseImage.substring(baseImage.indexOf("/")+1, baseImage.indexOf(";base64"));
+  const ext = baseImage.substring(baseImage.indexOf("/") + 1, baseImage.indexOf(";base64"));
 
   //สุ่มชื่อไฟล์ใหม่ พร้อมนามสกุล
   let filename = '';
   if (ext === 'svg+xml') {
-      filename = `${uuidv4.v4()}.svg`;
+    filename = `${uuidv4.v4()}.svg`;
   } else {
-      filename = `${uuidv4.v4()}.${ext}`;
+    filename = `${uuidv4.v4()}.${ext}`;
   }
 
   //Extract base64 data ออกมา
   let image = decodeBase64Image(baseImage);
 
   //เขียนไฟล์ไปไว้ที่ path
-  await writeFileAsync(uploadPath+filename, image.data, 'base64');
+  await writeFileAsync(uploadPath + filename, image.data, 'base64');
   //return ชื่อไฟล์ใหม่ออกไป
   return filename;
 }
@@ -108,7 +115,7 @@ function decodeBase64Image(base64Str) {
   var matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
   var image = {};
   if (!matches || matches.length !== 3) {
-      throw new Error('Invalid base64 string');
+    throw new Error('Invalid base64 string');
   }
 
   image.type = matches[1];
