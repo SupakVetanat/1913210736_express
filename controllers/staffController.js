@@ -5,6 +5,7 @@ const uuidv4 = require('uuid');
 const { promisify } = require('util')
 const writeFileAsync = promisify(fs.writeFile)
 const config = require('../config/index.js')
+const { validationResult } = require('express-validator');
 
 
 exports.staff = async (req, res, next) => {
@@ -90,16 +91,16 @@ exports.update = async (req, res, next) => {
         //     salary : salary
         // })
 
-        const staff = await Staff.findOneAndUpdate({_id: id}, {
+        const staff = await Staff.findOneAndUpdate({ _id: id }, {
             name: name,
             salary: salary
         })
 
-        if(!staff){
+        if (!staff) {
             const error = new Error("ไม่พบพนักงาน");
             error.statusCode = 400;
             throw error;
-          }
+        }
 
         res.status(200).json({
             message: "แก้ไขข้อมูลเรียบร้อยแล้ว"
@@ -111,8 +112,17 @@ exports.update = async (req, res, next) => {
 }
 
 exports.insert = async (req, res, next) => {
-
+    try{
     const { name, salary, photo } = req.body
+
+    // Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const error = new Error("ข้อมูลที่ได้รับมาไม่ถูกต้อง");
+        error.statusCode = 422;
+        error.validation = errors.array();
+        throw error;
+    }
 
     var photoData
     if (photo == null) {
@@ -128,10 +138,12 @@ exports.insert = async (req, res, next) => {
 
     })
     await staff.save()
-
     res.status(200).json({
         message: "เพิ่มข้อมูลเรียบร้อยแล้ว"
-    })
+    })}
+    catch(error){
+        next(error)
+      }
 }
 
 
