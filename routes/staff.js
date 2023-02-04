@@ -3,9 +3,10 @@ var router = express.Router();
 const staffController = require('../controllers/staffController')
 
 const { body } = require('express-validator');
+const passportJWT = require('../middleware/passportJWT')
 
 /* GET users listing. */
-router.get('/', staffController.staff);
+router.get('/',[passportJWT.isLogin], staffController.staff);
 
 router.get('/:id', staffController.show);
 
