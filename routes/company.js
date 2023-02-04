@@ -2,9 +2,11 @@ var express = require('express');
 var router = express.Router();
 const companyController = require('../controllers/companyController')
 
+const passportJWT = require('../middleware/passportJWT')
+const chackAdmin = require('../middleware/checkAdmin')
 /* GET users listing. */
 // router.get('/', companyController.company);
-router.get('/', companyController.all);
+router.get('/',[passportJWT.isLogin,chackAdmin.isAdmin],companyController.all);
 
 router.get('/:id', companyController.show);
 
